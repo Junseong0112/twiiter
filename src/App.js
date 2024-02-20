@@ -1,5 +1,12 @@
+import { useEffect } from "react";
+import { analytics } from "./service/firebase";
+
 function App() {
-  return <div className="App">first setting</div>;
+  useEffect(() => {
+    console.log(analytics);
+  });
+
+  return <div className="App"></div>;
 }
 
 export default App;
