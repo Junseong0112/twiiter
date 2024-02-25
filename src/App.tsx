@@ -71,6 +71,14 @@ const Body = () => {
     (state: RootState) => state.user.userInfo.loadState
   );
 
+  if (userId === null) {
+    return (
+      <>
+        <Typography>Please Log In</Typography>
+      </>
+    );
+  }
+
   if (userInfoLoadState === "loading") {
     return <CircularProgress />;
   }
