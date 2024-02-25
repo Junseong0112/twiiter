@@ -12,7 +12,11 @@ import { WithFirebaseApiProps, WithFirebaseApi } from "./Firebase";
 import Header from "./components/Header";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
-import { asyncSetUserInfo, handleUserChange } from "./redux/useSlice";
+import {
+  asyncSetUserInfo,
+  asyncUpdateUserInfo,
+  handleUserChange,
+} from "./redux/useSlice";
 
 const isLoadingState = (state: RootState): boolean => {
   return state.user.userId === undefined;
@@ -62,6 +66,51 @@ const OnboardingBase = (props: WithFirebaseApiProps) => {
 
 const Onboarding = WithFirebaseApi(OnboardingBase);
 
+const EditProfileBase = (props: WithFirebaseApiProps) => {
+  const userId = useAppSelector((state: RootState) => state.user.userId);
+  const dispatch = useAppDispatch();
+  const [username, setUsername] = useState<string>("");
+
+  return (
+    <>
+      <Typography variant="h2" component="div" align="left">
+        Edit Profile
+      </Typography>
+      <Stack direction="row" spacing={2}>
+        <Typography
+          variant="body1"
+          align="left"
+          sx={{ marginTop: "auto", marginBottom: "auto" }}
+        >
+          Username :{" "}
+        </Typography>
+        <TextField
+          value={username}
+          label="Edit Username"
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </Stack>
+      <Button
+        variant="contained"
+        sx={{ marginTop: 2 }}
+        onClick={async () => {
+          dispatch(
+            asyncUpdateUserInfo({
+              firebaseApi: props.firebaseApi,
+              userId: userId!,
+              userInfo: { username: username },
+            })
+          );
+        }}
+      >
+        SUBMIT
+      </Button>
+    </>
+  );
+};
+
+const EditProfile = WithFirebaseApi(EditProfileBase);
+
 const Body = () => {
   const userId = useAppSelector((state: RootState) => state.user.userId);
   const userInfo = useAppSelector(
@@ -95,6 +144,7 @@ const Body = () => {
   return (
     <>
       <Typography>{`Welcome ${userInfo.username}`}</Typography>
+      <EditProfile />
     </>
   );
 };
