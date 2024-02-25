@@ -4,7 +4,7 @@ import { WithFirebaseApiProps, WithFirebaseApi } from "./Firebase";
 import Header from "./components/Header";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
-import { setUserId } from "./redux/useSlice";
+import { handleUserChange } from "./redux/useSlice";
 
 const isLoadingState = (state: RootState): boolean => {
   return state.user.userId === undefined;
@@ -17,9 +17,9 @@ function App(props: WithFirebaseApiProps) {
   useEffect(() => {
     return props.firebaseApi.onAuthStateChanged((user) => {
       if (user) {
-        dispatch(setUserId(user.uid));
+        dispatch(handleUserChange(props.firebaseApi, user.uid));
       } else {
-        dispatch(setUserId(null));
+        dispatch(handleUserChange(props.firebaseApi, null));
       }
     });
   }, []);
