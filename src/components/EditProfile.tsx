@@ -30,10 +30,10 @@ const EditProfilePicViewModeBase = (
       .then((url) => {
         setProfilePicUrl(url);
       });
-  }, [props?.userInfo.profilePicHandle]);
+  }, [props?.userInfo.profilePicHandle, props.firebaseApi]);
   let profilePic = null;
   if (profilePicUrl) {
-    profilePic = <img src={profilePicUrl} width={200} />;
+    profilePic = <img src={profilePicUrl} width={200} alt="profileImg" />;
   }
 
   return (
@@ -74,10 +74,10 @@ const EditProfilePicEditModeBase = (
       .then((url) => {
         setProfilePicUrl(url);
       });
-  }, [props?.userInfo.profilePicHandle]);
+  }, [props?.userInfo.profilePicHandle, props.firebaseApi]);
   let profilePic = null;
   if (profilePicUrl) {
-    profilePic = <img src={profilePicUrl} width={200} />;
+    profilePic = <img src={profilePicUrl} width={200} alt="profileImg" />;
   }
 
   return (

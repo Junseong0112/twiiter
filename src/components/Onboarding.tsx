@@ -13,7 +13,13 @@ const OnboardingBase = (props: WithFirebaseApiProps) => {
   let selectedProfilePic = null;
 
   if (file !== null) {
-    selectedProfilePic = <img src={URL.createObjectURL(file!)} width={200} />;
+    selectedProfilePic = (
+      <img
+        src={URL.createObjectURL(file!)}
+        width={200}
+        alt="selectedProfileImg"
+      />
+    );
   }
 
   return (

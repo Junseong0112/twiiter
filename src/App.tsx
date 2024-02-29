@@ -62,7 +62,7 @@ function App(props: WithFirebaseApiProps) {
         dispatch(handleUserChange(props.firebaseApi, null));
       }
     });
-  }, []);
+  }, [dispatch, props.firebaseApi]);
 
   if (isLoading) {
     return <CircularProgress sx={{ margin: "auto" }} />;
