@@ -53,7 +53,7 @@ const OnboardingBase = (props: WithFirebaseApiProps) => {
             asyncSetUserInfo({
               firebaseApi: props.firebaseApi,
               userId: userId!,
-              userInfo: { username: username },
+              userInfo: { username: username, profilePicHandle: null },
             })
           );
         }}
