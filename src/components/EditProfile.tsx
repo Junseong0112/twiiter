@@ -65,7 +65,6 @@ const EditProfilePicEditModeBase = (
   const [file, setFile] = useState<File | null>(null);
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-
   useEffect(() => {
     if (props?.userInfo.profilePicHandle == null) {
       return;
@@ -111,17 +110,28 @@ const EditProfilePicEditModeBase = (
         variant="contained"
         sx={{ marginTop: 2 }}
         onClick={async () => {
-          const handle = await props.firebaseApi.asyncUploadImage(
-            props.userId,
-            file!
-          );
-          dispatch(
-            asyncUpdateUserInfo({
-              firebaseApi: props.firebaseApi,
-              userId: props.userId,
-              userInfo: { profilePicHandle: handle },
-            })
-          );
+          if (file) {
+            const handle = await props.firebaseApi.asyncUploadImage(
+              props.userId,
+              file
+            );
+            dispatch(
+              asyncUpdateUserInfo({
+                firebaseApi: props.firebaseApi,
+                userId: props.userId,
+                userInfo: { profilePicHandle: handle },
+              })
+            );
+          } else {
+            // 이미지를 변경하지 않았을 때의 처리
+            dispatch(
+              asyncUpdateUserInfo({
+                firebaseApi: props.firebaseApi,
+                userId: props.userId,
+                userInfo: { profilePicHandle: props.userInfo.profilePicHandle },
+              })
+            );
+          }
         }}
       >
         SUBMIT
