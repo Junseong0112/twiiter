@@ -155,4 +155,14 @@ export default class FirebaseApi {
     const querySnapshot = await getDocs(q);
     return getTweetsFromQuerySnapshot(querySnapshot);
   };
+  // 프로필 페이지 Tweet 읽어오는 로직
+  asyncGetProfileFeed = async (userId: string): Promise<Array<TweetWithId>> => {
+    const q = query(
+      collection(this.firestore, "tweets"),
+      where("userId", "==", userId),
+      orderBy("createdTime", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    return getTweetsFromQuerySnapshot(querySnapshot);
+  };
 }
