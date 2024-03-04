@@ -112,7 +112,7 @@ export default class FirebaseApi {
     });
     return tweetRef.id;
   };
-
+  // Main Feed에 보여질 피드 보여지는 로직
   asyncGetMainFeed = async (
     userId: string,
     following: Array<string>
