@@ -81,6 +81,7 @@ export default class FirebaseApi {
     return {
       username: docSnap.data().username,
       profilePicHandle: docSnap.data().profilePicHandle ?? null,
+      following: docSnap.data().following ?? [],
     };
   };
 

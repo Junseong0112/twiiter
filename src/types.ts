@@ -1,6 +1,7 @@
 export interface UserInfo {
   username: string;
   profilePicHandle: string | null;
+  following: Array<string>;
 }
 
 export interface WithLoadingState {
