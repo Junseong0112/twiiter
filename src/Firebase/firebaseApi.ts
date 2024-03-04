@@ -16,12 +16,14 @@ import {
   addDoc,
   collection,
   doc,
+  DocumentData,
   Firestore,
   getDoc,
   getDocs,
   getFirestore,
   orderBy,
   query,
+  QuerySnapshot,
   setDoc,
   where,
 } from "firebase/firestore";
@@ -33,6 +35,24 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { UserInfo, Tweet, TweetWithId } from "../types";
+
+const getTweetsFromQuerySnapshot = (
+  querySnapshot: QuerySnapshot<DocumentData>
+): Array<TweetWithId> => {
+  const tweets: Array<TweetWithId> = [];
+  const addTweet = (arr: Array<TweetWithId>, tweet: TweetWithId) => {
+    arr.push(tweet);
+  };
+  querySnapshot.forEach((doc) => {
+    addTweet(tweets, {
+      id: doc.id,
+      userId: doc.data().userId,
+      tweetContent: doc.data().tweetContent,
+      createdTime: doc.data().createdTime,
+    });
+  });
+  return tweets;
+};
 
 export default class FirebaseApi {
   app: FirebaseApp;
@@ -112,7 +132,7 @@ export default class FirebaseApi {
     });
     return tweetRef.id;
   };
-  // Main Feed에 보여질 피드 보여지는 로직
+  // 메인 피드에 following 및 내 피드를 읽어오는 로직
   asyncGetMainFeed = async (
     userId: string,
     following: Array<string>
@@ -123,19 +143,16 @@ export default class FirebaseApi {
       where("userId", "in", userIdFilter.slice(0, 10)),
       orderBy("createdTime", "desc")
     );
-    const tweets: Array<TweetWithId> = [];
-    const addTweet = (arr: Array<TweetWithId>, tweet: TweetWithId) => {
-      arr.push(tweet);
-    };
     const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      addTweet(tweets, {
-        id: doc.id,
-        userId: doc.data().userId,
-        tweetContent: doc.data().tweetContent,
-        createdTime: doc.data().createdTime,
-      });
-    });
-    return tweets;
+    return getTweetsFromQuerySnapshot(querySnapshot);
+  };
+  // 전체 피드를 읽어오는 로직
+  asyncGetExploreFeed = async (): Promise<Array<TweetWithId>> => {
+    const q = query(
+      collection(this.firestore, "tweets"),
+      orderBy("createdTime", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    return getTweetsFromQuerySnapshot(querySnapshot);
   };
 }
