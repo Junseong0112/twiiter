@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { WithFirebaseApiProps, WithFirebaseApi } from "./Firebase";
 import Header from "./components/Header";
 import Onboarding from "./components/Onboarding";
-import EditProfile from "./components/EditProfile";
+import MainFeed from "./components/MainFeed";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { RootState } from "./redux/store";
 import { handleUserChange } from "./redux/useSlice";
@@ -45,15 +45,7 @@ const Body = () => {
   }
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <>
-            <Typography>{`Welcome ${userInfo.username}`}</Typography>
-            <EditProfile />
-          </>
-        }
-      ></Route>
+      <Route path="/" element={<MainFeed />} />
     </Routes>
   );
 };
