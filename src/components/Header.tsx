@@ -19,6 +19,12 @@ const HeaderBase = (props: WithFirebaseApiProps) => {
       Log out
     </Button>
   );
+  const profileButton =
+    currentUserId == null ? null : (
+      <Button component={Link} to={"/user/" + currentUserId} color="inherit">
+        Profile
+      </Button>
+    );
   const button = currentUserId === null ? loginWithGoogleButton : logoutButton;
 
   return (
@@ -33,6 +39,7 @@ const HeaderBase = (props: WithFirebaseApiProps) => {
         <Button component={Link} to={"/explore"} color="inherit">
           Explore
         </Button>
+        {profileButton}
         {button}
       </Toolbar>
     </AppBar>
