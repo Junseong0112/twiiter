@@ -19,7 +19,7 @@ const TweetBase = (
   }, []);
 
   useEffect(() => {
-    if (userInfo?.profilePicHandle === null) {
+    if (userInfo?.profilePicHandle == null) {
       return;
     }
     props.firebaseApi

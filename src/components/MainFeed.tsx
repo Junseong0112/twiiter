@@ -1,15 +1,22 @@
 import { WithFirebaseApiProps, WithFirebaseApi } from "../Firebase";
-import { Box, Stack, TextField, Button } from "@mui/material";
-import { useState } from "react";
+import { Box, Stack, TextField, Button, CircularProgress } from "@mui/material";
+import { useState, useEffect } from "react";
 import { useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
+import { TweetWithId } from "../types";
+import Tweet from "./Tweet";
 
-const TweetInputFieldBase = (props: WithFirebaseApiProps) => {
+const TweetInputFieldBase = (
+  props: {
+    onClick: () => void;
+  } & WithFirebaseApiProps
+) => {
   const currentUserId = useAppSelector((state: RootState) => state.user.userId);
   const [tweetContent, setTweetContent] = useState<string>("");
 
   const onSubmit = async () => {
     await props.firebaseApi.asyncCreateTweet(currentUserId!, tweetContent);
+    props.onClick();
     setTweetContent("");
   };
 
@@ -34,9 +41,32 @@ const TweetInputFieldBase = (props: WithFirebaseApiProps) => {
 const TweetInputField = WithFirebaseApi(TweetInputFieldBase);
 
 const MainFeedBase = (props: WithFirebaseApiProps) => {
+  const currentUserId = useAppSelector((state: RootState) => state.user.userId);
+  const userInfo = useAppSelector(
+    (state: RootState) => state.user.userInfo.value
+  );
+  const [tweets, setTweets] = useState<Array<TweetWithId> | null>(null);
+
+  const fetchTweets = () => {
+    props.firebaseApi
+      .asyncGetMainFeed(currentUserId!, userInfo!.following)
+      .then((tweets) => {
+        setTweets(tweets);
+      });
+  };
+  useEffect(() => {
+    fetchTweets();
+  }, []);
+
+  if (tweets === null) {
+    return <CircularProgress />;
+  }
   return (
     <>
-      <TweetInputField />
+      <TweetInputField onClick={fetchTweets} />
+      {tweets.map((tweet) => (
+        <Tweet key={tweet.id} tweet={tweet} />
+      ))}
     </>
   );
 };
