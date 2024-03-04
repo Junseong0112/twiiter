@@ -1,12 +1,13 @@
 import { WithFirebaseApiProps, WithFirebaseApi } from "../Firebase";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { TweetWithId, UserInfo } from "../types";
 import Tweet from "./Tweet";
 import { useParams } from "react-router-dom";
 import EditProfile from "./EditProfile";
+import { handleFollow, handleUnfollow } from "../redux/useSlice";
 
 const ProfileCardBase = (
   props: {
@@ -20,6 +21,7 @@ const ProfileCardBase = (
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [isEditProfile, setIsEditProfile] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     props.firebaseApi.asyncGetUserInfo(props.userId).then((userInfo) => {
@@ -59,7 +61,27 @@ const ProfileCardBase = (
   let button = null;
   if (currentUserId !== props.userId) {
     const isFollowing = currentUserInfo!.following.includes(props.userId);
-    button = isFollowing ? <Button>Unfollow</Button> : <Button>Follow</Button>;
+    button = isFollowing ? (
+      <Button
+        onClick={() => {
+          dispatch(
+            handleUnfollow(props.firebaseApi, currentUserId!, props.userId)
+          );
+        }}
+      >
+        Unfollow
+      </Button>
+    ) : (
+      <Button
+        onClick={() => {
+          dispatch(
+            handleFollow(props.firebaseApi, currentUserId!, props.userId)
+          );
+        }}
+      >
+        Follow
+      </Button>
+    );
   } else {
     button = (
       <Button
@@ -106,7 +128,7 @@ const ProfilePageBase = (props: WithFirebaseApiProps) => {
   }
   return (
     <>
-      <ProfileCard userId={params.userId} />
+      <ProfileCard userId={params.userId!} />
       {tweets.map((tweet) => (
         <Tweet key={tweet.id} tweet={tweet} />
       ))}
