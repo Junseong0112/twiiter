@@ -71,7 +71,7 @@ function App(props: WithFirebaseApiProps) {
   return (
     <BrowserRouter>
       <Header />
-      <Container>
+      <Container sx={{ paddingTop: 3 }}>
         <Box sx={{ margin: "auto" }}>
           <Body />
         </Box>

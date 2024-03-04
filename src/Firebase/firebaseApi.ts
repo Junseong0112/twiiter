@@ -18,8 +18,12 @@ import {
   doc,
   Firestore,
   getDoc,
+  getDocs,
   getFirestore,
+  orderBy,
+  query,
   setDoc,
+  where,
 } from "firebase/firestore";
 import {
   FirebaseStorage,
@@ -28,7 +32,7 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { UserInfo, Tweet } from "../types";
+import { UserInfo, Tweet, TweetWithId } from "../types";
 
 export default class FirebaseApi {
   app: FirebaseApp;
@@ -107,5 +111,31 @@ export default class FirebaseApi {
       userId: userId,
     });
     return tweetRef.id;
+  };
+
+  asyncGetMainFeed = async (
+    userId: string,
+    following: Array<string>
+  ): Promise<Array<TweetWithId>> => {
+    const userIdFilter = [userId, ...following];
+    const q = query(
+      collection(this.firestore, "tweets"),
+      where("userId", "in", userIdFilter.slice(0, 10)),
+      orderBy("createdTime", "desc")
+    );
+    const tweets: Array<TweetWithId> = [];
+    const addTweet = (arr: Array<TweetWithId>, tweet: TweetWithId) => {
+      arr.push(tweet);
+    };
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      addTweet(tweets, {
+        id: doc.id,
+        userId: doc.data().userId,
+        tweetContent: doc.data().tweetContent,
+        createdTime: doc.data().createdTime,
+      });
+    });
+    return tweets;
   };
 }

@@ -4,6 +4,10 @@ export interface UserInfo {
   following: Array<string>;
 }
 
+export interface WithId {
+  id: string;
+}
+
 export interface WithLoadingState {
   loadState: "idle" | "loading" | "failed";
 }
@@ -13,3 +17,5 @@ export interface Tweet {
   tweetContent: string;
   createdTime: number;
 }
+
+export type TweetWithId = Tweet & WithId;
